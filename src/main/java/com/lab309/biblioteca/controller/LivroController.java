@@ -2,6 +2,7 @@ package com.lab309.biblioteca.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,8 @@ public class LivroController {
 	
 	
 	@GetMapping("/livros")
-	public ResponseEntity<List<Livro>> buscarTodos(){
-		return ResponseEntity.ok(livroServices.buscarTodos());
+	public ResponseEntity<List<Livro>> buscarTodos(@RequestParam(required = false) Map<String,String> filtros){
+		return ResponseEntity.ok(livroServices.buscarTodos(filtros));
 	}
 	
 	

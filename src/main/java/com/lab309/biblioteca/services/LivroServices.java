@@ -1,6 +1,8 @@
 package com.lab309.biblioteca.services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +27,20 @@ public class LivroServices{
 		return livroRepository.save(livro);
 	}
 
-	public List<Livro> buscarTodos(){
-		return livroRepository.findAll();
+	public List<Livro> buscarTodos(Map<String, String> filtros){
+		List<Livro> listaDeLivros = new ArrayList<Livro>();
+		
+		if(filtros.isEmpty()) {
+			listaDeLivros = livroRepository.findAll();
+		}
+		else if(!(filtros.get("autor") == null)) {
+			listaDeLivros = livroRepository.findByAutor(filtros.get("autor"));
+		}		
+		else if(!(filtros.get("genero") == null)) {
+			listaDeLivros = livroRepository.findByGenero(filtros.get("genero"));
+		}		
+		
+		return listaDeLivros;
 	}
 	
 	public void removerLivro(Long id){
@@ -42,6 +56,6 @@ public class LivroServices{
 			return livroRepository.save(livro);
 		}
 		
-		return new Livro();
+		return livro;
 	}
 }
