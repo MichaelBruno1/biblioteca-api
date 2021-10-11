@@ -8,6 +8,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lab309.biblioteca.dto.LivroDTO;
+import com.lab309.biblioteca.dto.UsuarioDTO;
 import com.lab309.biblioteca.model.Livro;
 import com.lab309.biblioteca.model.Usuario;
 import com.lab309.biblioteca.repository.LivroRepository;
@@ -23,23 +25,24 @@ public class UsuarioService {
 	LivroRepository livroRepository;
 	
 	
-	public Usuario registraUsuario(Usuario usuario) {
-		return usuarioRepository.save(usuario);
+	public UsuarioDTO registraUsuario(Usuario usuario) {
+		return new UsuarioDTO(usuarioRepository.save(usuario));
 	}
 	
-	public Optional<Usuario> buscarUsuario(Long id) {
-		return usuarioRepository.findById(id);
+	public UsuarioDTO buscarUsuario(Long id) {
+		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
+		return new UsuarioDTO(usuarioOpcional.get());
 	}
 	
-	public List<Usuario> buscaTodos(){
-		return usuarioRepository.findAll();
+	public List<UsuarioDTO> buscaTodos(){
+		return UsuarioDTO.converter(usuarioRepository.findAll());
 	}
 	
 	public void removerUsuario(Long id){
 		usuarioRepository.deleteById(id);
 	}
 	
-	public List<Usuario> buscarTodos(Map<String, String> filtros){
+	public List<UsuarioDTO> buscarTodos(Map<String, String> filtros){
 		List<Usuario> listaDeUsuarios = new ArrayList<Usuario>();
 		
 		if(filtros.isEmpty()) {
@@ -52,23 +55,23 @@ public class UsuarioService {
 			listaDeUsuarios = usuarioRepository.findByEmail(filtros.get("email"));
 		}		
 		
-		return listaDeUsuarios;
+		return UsuarioDTO.converter(listaDeUsuarios);
 	}
 	
-	public Usuario atualizaUsuario(Long id, Usuario usuario){
+	public UsuarioDTO atualizaUsuario(Long id, Usuario usuario){
 		
 		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
 
 		if (usuarioOpcional.isPresent()) {
 			usuario.setId(id);
-			return usuarioRepository.save(usuario);
+			usuarioRepository.save(usuario);
 		}
 		
-		return usuario;
+		return new UsuarioDTO(usuario);
 	}
 	
 	
-	public Usuario alugaLivro(Long id, Livro livro) {
+	public LivroDTO alugaLivro(Long id, Livro livro) {
 		
 		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
 		
@@ -78,11 +81,11 @@ public class UsuarioService {
 			livroRepository.save(livro);
 		}
 		
-		return usuarioOpcional.get();
+		return new LivroDTO(livro);
 	}
 	
 	
-	public Livro devolveLivro(Long id, Livro livro) {
+	public LivroDTO devolveLivro(Long id, Livro livro) {
 		
 		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
 		
@@ -92,6 +95,6 @@ public class UsuarioService {
 			livroRepository.save(livro);
 		}
 		
-		return livro;
+		return new LivroDTO(livro);
 	}
 }

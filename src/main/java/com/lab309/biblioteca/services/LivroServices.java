@@ -65,4 +65,13 @@ public class LivroServices{
 		
 		return new LivroDTO(livro);
 	}
+	
+	public List<LivroDTO> buscaLivrosPorUsuario(Long id){
+		
+		List<Livro> listaDeLivros = new ArrayList<Livro>();
+		
+		listaDeLivros = livroRepository.findByUsuarioId(id);
+		
+		return LivroDTO.converter(listaDeLivros);
+	}
 }
