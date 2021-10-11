@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lab309.biblioteca.dto.LivroDTO;
 import com.lab309.biblioteca.model.Livro;
 import com.lab309.biblioteca.repository.LivroRepository;
 
@@ -18,8 +19,11 @@ public class LivroServices{
 	LivroRepository livroRepository;
 	
 	
-	public Optional<Livro> buscarLivro(Long id) {
-		return livroRepository.findById(id);
+	public LivroDTO buscarLivro(Long id) {
+		
+		Optional<Livro> livroOpcional = livroRepository.findById(id);		
+	
+		return new LivroDTO(livroOpcional.get());
 	}
 
 	
@@ -27,8 +31,10 @@ public class LivroServices{
 		return livroRepository.save(livro);
 	}
 
-	public List<Livro> buscarTodos(Map<String, String> filtros){
+	public List<LivroDTO> buscarTodos(Map<String, String> filtros){
+		
 		List<Livro> listaDeLivros = new ArrayList<Livro>();
+		
 		
 		if(filtros.isEmpty()) {
 			listaDeLivros = livroRepository.findAll();
@@ -38,24 +44,34 @@ public class LivroServices{
 		}		
 		else if(!(filtros.get("genero") == null)) {
 			listaDeLivros = livroRepository.findByGenero(filtros.get("genero"));
-		}		
+		}
 		
-		return listaDeLivros;
+		return LivroDTO.converter(listaDeLivros);
 	}
 	
 	public void removerLivro(Long id){
 		livroRepository.deleteById(id);
 	}
 	
-	public Livro atualizaLivro(Long id, Livro livro){
+	public LivroDTO atualizaLivro(Long id, Livro livro){
 		
 		Optional<Livro> livroOpcional = livroRepository.findById(id);
-
+		
+		
 		if (livroOpcional.isPresent()) {
 			livro.setId(id);
-			return livroRepository.save(livro);
+			livroRepository.save(livro);
 		}
 		
-		return livro;
+		return new LivroDTO(livro);
+	}
+	
+	public List<LivroDTO> buscaLivrosPorUsuario(Long id){
+		
+		List<Livro> listaDeLivros = new ArrayList<Livro>();
+		
+		listaDeLivros = livroRepository.findByUsuarioId(id);
+		
+		return LivroDTO.converter(listaDeLivros);
 	}
 }

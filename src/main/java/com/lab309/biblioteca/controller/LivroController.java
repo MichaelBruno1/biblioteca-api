@@ -3,7 +3,6 @@ package com.lab309.biblioteca.controller;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.lab309.biblioteca.dto.LivroDTO;
 import com.lab309.biblioteca.model.Livro;
 import com.lab309.biblioteca.services.LivroServices;
 
@@ -29,13 +29,13 @@ public class LivroController {
 	LivroServices livroServices;
 	
 	@GetMapping("/livro/{id}")
-	public ResponseEntity<Optional<Livro>> buscarLivro(@PathVariable Long id){
+	public ResponseEntity<LivroDTO> buscarLivro(@PathVariable Long id){
 		return ResponseEntity.ok(livroServices.buscarLivro(id));
 	}
 	
 	
 	@GetMapping("/livros")
-	public ResponseEntity<List<Livro>> buscarTodos(@RequestParam(required = false) Map<String,String> filtros){
+	public ResponseEntity<List<LivroDTO>> buscarTodos(@RequestParam(required = false) Map<String,String> filtros){
 		return ResponseEntity.ok(livroServices.buscarTodos(filtros));
 	}
 	
@@ -51,7 +51,7 @@ public class LivroController {
 	
 	
 	@PutMapping("/livro/{id}")
-	public ResponseEntity<Livro> atualizaLivro(@PathVariable Long id, @RequestBody Livro livro){
+	public ResponseEntity<LivroDTO> atualizaLivro(@PathVariable Long id, @RequestBody Livro livro){
 		return ResponseEntity.ok(livroServices.atualizaLivro(id, livro));
 	}
 	
