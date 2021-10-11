@@ -11,8 +11,7 @@ import com.lab309.biblioteca.model.ApiStatus;
 @RequestMapping("/api")
 public class ApiStatusController {
 
-	@GetMapping
-	@RequestMapping("/status")
+	@GetMapping("/status")
 	public ResponseEntity<ApiStatus> status(){
 		ApiStatus status = new ApiStatus("v1", "OK");
 		
