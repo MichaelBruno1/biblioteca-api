@@ -18,6 +18,7 @@ public class Livro {
 	private String titulo;
 	private String autor;
 	private String genero;
+	private boolean alugado;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "usuario_id")
@@ -30,6 +31,7 @@ public class Livro {
 		this.titulo = titulo;
 		this.autor = autor;
 		this.genero = genero;
+		this.alugado = false;
 	}
 
 	public Long getId() {
@@ -70,6 +72,15 @@ public class Livro {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public boolean isAlugado() {
+		return alugado;
+	}
+
+	public void setAlugado(boolean alugado) {
+		this.alugado = alugado;
 	}	
+	
 	
 }

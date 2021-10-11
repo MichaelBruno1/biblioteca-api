@@ -74,6 +74,7 @@ public class UsuarioService {
 		
 		if(usuarioOpcional.isPresent()) {
 			livro.setUsuario(usuarioOpcional.get());
+			livro.setAlugado(true);
 			livroRepository.save(livro);
 		}
 		
@@ -87,6 +88,7 @@ public class UsuarioService {
 		
 		if(usuarioOpcional.isPresent()) {
 			livro.setUsuario(null);
+			livro.setAlugado(false);
 			livroRepository.save(livro);
 		}
 		
