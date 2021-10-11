@@ -8,7 +8,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lab309.biblioteca.model.Livro;
 import com.lab309.biblioteca.model.Usuario;
+import com.lab309.biblioteca.repository.LivroRepository;
 import com.lab309.biblioteca.repository.UsuarioRepository;
 
 @Service
@@ -16,7 +18,10 @@ public class UsuarioService {
 
 	@Autowired
 	UsuarioRepository usuarioRepository;
-		
+	
+	@Autowired
+	LivroRepository livroRepository;
+	
 	
 	public Usuario registraUsuario(Usuario usuario) {
 		return usuarioRepository.save(usuario);
@@ -63,5 +68,28 @@ public class UsuarioService {
 	}
 	
 	
-
+	public Usuario alugaLivro(Long id, Livro livro) {
+		
+		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
+		
+		if(usuarioOpcional.isPresent()) {
+			livro.setUsuario(usuarioOpcional.get());
+			livroRepository.save(livro);
+		}
+		
+		return usuarioOpcional.get();
+	}
+	
+	
+	public Livro devolveLivro(Long id, Livro livro) {
+		
+		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
+		
+		if(usuarioOpcional.isPresent()) {
+			livro.setUsuario(null);
+			livroRepository.save(livro);
+		}
+		
+		return livro;
+	}
 }

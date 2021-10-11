@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.lab309.biblioteca.model.Livro;
 import com.lab309.biblioteca.model.Usuario;
+import com.lab309.biblioteca.repository.LivroRepository;
 import com.lab309.biblioteca.services.UsuarioService;
 
 @RestController
@@ -27,6 +29,9 @@ public class UsuarioController {
 
 	@Autowired
 	UsuarioService usuarioService;
+	
+	@Autowired
+	LivroRepository livroRepository;
 	
 	@GetMapping("/usuario/{id}")
 	public ResponseEntity<Optional<Usuario>> buscarLivro(@PathVariable Long id){
@@ -60,5 +65,21 @@ public class UsuarioController {
 	public ResponseEntity<?> removerLivro(@PathVariable Long id){
 		usuarioService.removerUsuario(id);
 		return ResponseEntity.ok().build();
+	}
+	
+	
+	@PostMapping("/usuario/{id}/alugar")
+	public ResponseEntity<Usuario> alugarLivro(@PathVariable Long id, @RequestBody Livro livro){		
+		return ResponseEntity.ok(usuarioService.alugaLivro(id, livro));
+	}
+	
+	@PostMapping("/usuario/{id}/devolver")
+	public ResponseEntity<Livro> devolverLivro(@PathVariable Long id, @RequestBody Livro livro){		
+		return ResponseEntity.ok(usuarioService.devolveLivro(id, livro));
+	}
+	
+	@GetMapping("/usuario/{id}/livros")
+	public ResponseEntity<List<Livro>> alugarLivro(@PathVariable Long id){		
+		return ResponseEntity.ok(livroRepository.findByUsuarioId(id));
 	}
 }

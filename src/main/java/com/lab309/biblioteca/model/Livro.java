@@ -1,9 +1,12 @@
 package com.lab309.biblioteca.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Livro {
@@ -15,6 +18,10 @@ public class Livro {
 	private String titulo;
 	private String autor;
 	private String genero;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "usuario_id")
+	private Usuario usuario;
 	
 	
 	public Livro() {}
@@ -55,6 +62,14 @@ public class Livro {
 
 	public void setGenero(String genero) {
 		this.genero = genero;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}	
 	
 }

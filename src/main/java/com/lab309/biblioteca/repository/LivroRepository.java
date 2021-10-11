@@ -16,4 +16,6 @@ public interface LivroRepository extends JpaRepository<Livro, Long>{
 
 	List<Livro> findByGenero(String genero);
 	
+	List<Livro> findByUsuarioId(Long usuarioId);
+	
 }
