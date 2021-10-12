@@ -4,12 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lab309.biblioteca.dto.LivroDTO;
 import com.lab309.biblioteca.dto.UsuarioDTO;
+import com.lab309.biblioteca.exception.NotFoundException;
+import com.lab309.biblioteca.exception.ObjetoInvalidoException;
 import com.lab309.biblioteca.model.Livro;
 import com.lab309.biblioteca.model.Usuario;
 import com.lab309.biblioteca.repository.LivroRepository;
@@ -26,11 +34,25 @@ public class UsuarioService {
 	
 	
 	public UsuarioDTO registraUsuario(Usuario usuario) {
+		
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<Usuario>> violations = validator.validate(usuario);
+		
+		if (!violations.isEmpty()) {
+			throw new ObjetoInvalidoException("Objeto Inválido");
+		}
+		
 		return new UsuarioDTO(usuarioRepository.save(usuario));
 	}
 	
 	public UsuarioDTO buscarUsuario(Long id) {
 		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
+		
+		if(usuarioOpcional.isEmpty()) {
+			throw new NotFoundException("Usuario não encontrado");
+		}
+		
 		return new UsuarioDTO(usuarioOpcional.get());
 	}
 	
@@ -39,7 +61,14 @@ public class UsuarioService {
 	}
 	
 	public void removerUsuario(Long id){
-		usuarioRepository.deleteById(id);
+		
+		try {
+			usuarioRepository.deleteById(id);
+			
+		} catch (Exception e) {
+			throw new NotFoundException("Usuario não encontrado");			
+		}
+		
 	}
 	
 	public List<UsuarioDTO> buscarTodos(Map<String, String> filtros){
@@ -65,6 +94,8 @@ public class UsuarioService {
 		if (usuarioOpcional.isPresent()) {
 			usuario.setId(id);
 			usuarioRepository.save(usuario);
+		}else {
+			throw new NotFoundException("Usuario não encontrado");
 		}
 		
 		return new UsuarioDTO(usuario);
@@ -72,13 +103,16 @@ public class UsuarioService {
 	
 	
 	public LivroDTO alugaLivro(Long id, Livro livro) {
-		
+
 		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
+		Optional<Livro> livroOpcional = livroRepository.findById(livro.getId());
 		
-		if(usuarioOpcional.isPresent()) {
+		if(usuarioOpcional.isPresent() && livroOpcional.isPresent()) {
 			livro.setUsuario(usuarioOpcional.get());
 			livro.setAlugado(true);
 			livroRepository.save(livro);
+		}else {
+			throw new NotFoundException("Usuario ou livro não encontrado");
 		}
 		
 		return new LivroDTO(livro);
@@ -88,11 +122,14 @@ public class UsuarioService {
 	public LivroDTO devolveLivro(Long id, Livro livro) {
 		
 		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
+		Optional<Livro> livroOpcional = livroRepository.findById(livro.getId());
 		
-		if(usuarioOpcional.isPresent()) {
-			livro.setUsuario(null);
-			livro.setAlugado(false);
+		if(usuarioOpcional.isPresent() && livroOpcional.isPresent()) {
+			livro.setUsuario(usuarioOpcional.get());
+			livro.setAlugado(true);
 			livroRepository.save(livro);
+		}else {
+			throw new NotFoundException("Usuario ou livro não encontrado");
 		}
 		
 		return new LivroDTO(livro);
