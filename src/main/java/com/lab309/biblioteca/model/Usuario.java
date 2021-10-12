@@ -4,6 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Usuario {
@@ -12,8 +15,17 @@ public class Usuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotBlank
+	@Size(min = 1, max = 50)
 	private String usuario;
+	
+	@NotBlank(message = "Name cannot be null")
+	@Size(min = 1, max = 20)
 	private String senha;
+	
+	@NotBlank
+	@Email
+	@Size(min = 1, max = 100)
 	private String email;
 		
 	public Usuario() {}
