@@ -126,7 +126,7 @@ public class UsuarioService {
 		
 		if(usuarioOpcional.isPresent() && livroOpcional.isPresent()) {
 			livro.setUsuario(usuarioOpcional.get());
-			livro.setAlugado(true);
+			livro.setAlugado(false);
 			livroRepository.save(livro);
 		}else {
 			throw new NotFoundException("Usuario ou livro não encontrado");
