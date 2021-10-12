@@ -3,16 +3,9 @@ package com.lab309.biblioteca.controller;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +19,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.lab309.biblioteca.dto.LivroDTO;
 import com.lab309.biblioteca.dto.UsuarioDTO;
-import com.lab309.biblioteca.exception.ObjetoInvalidoException;
 import com.lab309.biblioteca.model.Livro;
 import com.lab309.biblioteca.model.Usuario;
 import com.lab309.biblioteca.services.LivroServices;
