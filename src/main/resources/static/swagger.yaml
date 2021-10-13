@@ -55,6 +55,15 @@ paths:
         - Livro
       summary: Retorna todos os livros.
       description: 'Retorna todos os livros'
+      parameters:
+        - in: query
+          name: autor
+          schema:
+            type: string
+        - in: query
+          name: genero
+          schema:
+            type: string
       responses:
         '200':
           description: 'Retorna todos os livros'
@@ -168,6 +177,15 @@ paths:
         - Usuario
       summary: Retorna todos os usuario.
       description: 'Retorna todos os usuarios'
+      parameters:
+        - in: query
+          name: usuario
+          schema:
+            type: string
+        - in: query
+          name: email
+          schema:
+            type: string
       responses:
         '200':
           description: 'Retorna todos os usuarios'
@@ -387,6 +405,7 @@ components:
         - autor
         - genero
         - alugado
+        - alugadoPor
       type: object
       properties:
         id:
@@ -409,6 +428,19 @@ components:
           type: boolean
           description: Status de disponibilidade
           example: false
+        alugadoPor:
+          type: object
+          properties:
+            usuario:
+              type: string
+              description: Gênero do livro
+              example: "Michael"
+            email:
+              type: string
+              description: Gênero do livro
+              example: "michael@email.com"
+            
+          
           
     LivroAlugado:
       required:

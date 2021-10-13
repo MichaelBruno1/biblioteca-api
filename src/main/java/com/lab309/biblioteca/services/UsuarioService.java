@@ -125,7 +125,7 @@ public class UsuarioService {
 		Optional<Livro> livroOpcional = livroRepository.findById(livro.getId());
 		
 		if(usuarioOpcional.isPresent() && livroOpcional.isPresent()) {
-			livro.setUsuario(usuarioOpcional.get());
+			livro.setUsuario(null);
 			livro.setAlugado(false);
 			livroRepository.save(livro);
 		}else {
