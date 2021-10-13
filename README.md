@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-# biblioteca-api
-=======
 # Biblioteca API
 
 ## Sobre
@@ -31,5 +28,3 @@ Para testar a API basta importar a coleção de chamada do Postman que se encont
 Ou acessar o endereço http://localhost:8080/swagger-ui.html para execução do Swagger.
 
 > **_NOTE:_**  Apena usuários cadastrados podem alugar um livro.
-
->>>>>>> Stashed changes
