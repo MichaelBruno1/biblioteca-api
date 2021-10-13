@@ -297,14 +297,14 @@ paths:
         content: 
           application/json:
             schema:
-              $ref: '#/components/schemas/LivroResponse'
+              $ref: '#/components/schemas/LivroAluguel'
       responses:
         '201':
           description: 'Retorna o livro alugado'
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/LivroAlugado'
+                  $ref: '#/components/schemas/LivroResponse'
         '400':
           description: 'Erro de validação do usuario'
           content:
@@ -329,7 +329,7 @@ paths:
         content: 
           application/json:
             schema:
-              $ref: '#/components/schemas/Livro'
+              $ref: '#/components/schemas/LivroAluguel'
       responses:
         '201':
           description: 'Retorna o livro alugado'
@@ -365,7 +365,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/LivroAlugado'
+                  $ref: '#/components/schemas/LivroResponse'
                   
 components:
   schemas:
@@ -449,7 +449,31 @@ components:
               type: string
               description: Gênero do livro
               example: "michael@email.com"
-            
+    
+    LivroAluguel:
+      required:
+        - id
+        - titulo
+        - autor
+        - genero
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id do livro
+          example: 1
+        titulo:
+          type: string
+          description: Título do livro
+          example: "O Hobbit"
+        autor:
+          type: string
+          description: Nome do autor
+          example: "J. R. R. Tolkien"
+        genero:
+          type: string
+          description: Gênero do livro
+          example: "Fantasia"      
           
           
     LivroAlugado:
