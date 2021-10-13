@@ -25,7 +25,6 @@ mvn spring-boot:run
 ## Testando a API
 Para testar a API basta importar a coleção de chamada do Postman que se encontra na raiz do projeto _biblioteca.postman_collection.json_ .
 
-Ou acessar o endereço http://localhost:8080/swagger-ui para execução do Swagger.
+Ou acessar o endereço http://localhost:8080/swagger-ui.html para execução do Swagger.
 
 > **_NOTE:_**  Apena usuários cadastrados podem alugar um livro.
-

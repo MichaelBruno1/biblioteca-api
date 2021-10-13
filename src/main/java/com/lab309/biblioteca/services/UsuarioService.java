@@ -108,9 +108,13 @@ public class UsuarioService {
 		Optional<Livro> livroOpcional = livroRepository.findById(livro.getId());
 		
 		if(usuarioOpcional.isPresent() && livroOpcional.isPresent()) {
-			livro.setUsuario(usuarioOpcional.get());
-			livro.setAlugado(true);
-			livroRepository.save(livro);
+			if(livroOpcional.get().isAlugado()) {
+				throw new ObjetoInvalidoException("O livro já está alugado");
+			}else {
+				livro.setUsuario(usuarioOpcional.get());
+				livro.setAlugado(true);
+				livroRepository.save(livro);
+			}
 		}else {
 			throw new NotFoundException("Usuario ou livro não encontrado");
 		}
@@ -125,9 +129,13 @@ public class UsuarioService {
 		Optional<Livro> livroOpcional = livroRepository.findById(livro.getId());
 		
 		if(usuarioOpcional.isPresent() && livroOpcional.isPresent()) {
-			livro.setUsuario(null);
-			livro.setAlugado(false);
-			livroRepository.save(livro);
+			if (usuarioOpcional.get().getId() == livroOpcional.get().getUsuario().getId()) {
+				livro.setUsuario(null);
+				livro.setAlugado(false);
+				livroRepository.save(livro);				
+			}else {
+				throw new ObjetoInvalidoException("O livro não foi alugar por este usuário");
+			}
 		}else {
 			throw new NotFoundException("Usuario ou livro não encontrado");
 		}
