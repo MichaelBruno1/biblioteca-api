@@ -405,6 +405,7 @@ components:
         - autor
         - genero
         - alugado
+        - alugadoPor
       type: object
       properties:
         id:
@@ -427,6 +428,19 @@ components:
           type: boolean
           description: Status de disponibilidade
           example: false
+        alugadoPor:
+          type: object
+          properties:
+            usuario:
+              type: string
+              description: Gênero do livro
+              example: "Michael"
+            email:
+              type: string
+              description: Gênero do livro
+              example: "michael@email.com"
+            
+          
           
     LivroAlugado:
       required:

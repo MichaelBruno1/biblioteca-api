@@ -12,6 +12,7 @@ public class LivroDTO {
 	private String autor;
 	private String genero;
 	private boolean alugado;
+	private UsuarioDTO alugadoPor;
 	
 	public LivroDTO(Livro livro) {
 		this.id = livro.getId();
@@ -19,6 +20,10 @@ public class LivroDTO {
 		this.autor = livro.getAutor();
 		this.genero = livro.getGenero();
 		this.alugado = livro.isAlugado();
+		
+		if(this.alugado == true) {
+			this.alugadoPor = new UsuarioDTO(livro.getUsuario());
+		}
 	}
 
 	public Long getId() {
@@ -40,7 +45,11 @@ public class LivroDTO {
 	public boolean isAlugado() {
 		return alugado;
 	}
-	
+		
+	public UsuarioDTO getAlugadoPor() {
+		return alugadoPor;
+	}
+
 	public static List<LivroDTO> converter(List<Livro> livros) {
 		return livros.stream().map(LivroDTO::new).collect(Collectors.toList());
 	}
