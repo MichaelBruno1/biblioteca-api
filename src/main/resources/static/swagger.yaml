@@ -112,6 +112,11 @@ paths:
           schema:
             type: string
           required: true
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Livro'
       responses:
         '200':
           description: 'Retorna o livro com o ID informado com informações atualizadas'
@@ -234,6 +239,11 @@ paths:
           schema:
             type: string
           required: true
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
       responses:
         '200':
           description: 'Retorna o usuario com o ID informado com informações atualizadas'
