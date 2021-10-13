@@ -3,7 +3,6 @@ package com.lab309.biblioteca.controller;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.lab309.biblioteca.dto.LivroDTO;
+import com.lab309.biblioteca.dto.UsuarioDTO;
 import com.lab309.biblioteca.model.Livro;
 import com.lab309.biblioteca.model.Usuario;
-import com.lab309.biblioteca.repository.LivroRepository;
+import com.lab309.biblioteca.services.LivroServices;
 import com.lab309.biblioteca.services.UsuarioService;
 
 @RestController
@@ -31,32 +32,33 @@ public class UsuarioController {
 	UsuarioService usuarioService;
 	
 	@Autowired
-	LivroRepository livroRepository;
+	LivroServices livroServices;
 	
 	@GetMapping("/usuario/{id}")
-	public ResponseEntity<Optional<Usuario>> buscarLivro(@PathVariable Long id){
+	public ResponseEntity<UsuarioDTO> buscarLivro(@PathVariable Long id){
 		return ResponseEntity.ok(usuarioService.buscarUsuario(id));
 	}
 	
 	
 	@GetMapping("/usuarios")
-	public ResponseEntity<List<Usuario>> buscarTodos(@RequestParam(required = false) Map<String,String> filtros){
+	public ResponseEntity<List<UsuarioDTO>> buscarTodos(@RequestParam(required = false) Map<String,String> filtros){
 		return ResponseEntity.ok(usuarioService.buscarTodos(filtros));
 	}
 	
 	
 	@PostMapping("/usuario")
-	public ResponseEntity<Usuario> inserirLivro(@RequestBody Usuario usuario, UriComponentsBuilder uriBuilder){
-		usuario = usuarioService.registraUsuario(usuario);
+	public ResponseEntity<?> inserirLivro(@RequestBody Usuario usuario, UriComponentsBuilder uriBuilder){
 		
-		URI uri = uriBuilder.path("/usuario").buildAndExpand(usuario.getId()).toUri();
+		UsuarioDTO usuarioDTO = usuarioService.registraUsuario(usuario);
 		
-		return ResponseEntity.created(uri).body(usuario);
+		URI uri = uriBuilder.path("/usuario").buildAndExpand(usuarioDTO.getId()).toUri();
+		
+		return ResponseEntity.created(uri).body(usuarioDTO);
 	}
 	
 	
 	@PutMapping("/usuario/{id}")
-	public ResponseEntity<Usuario> atualizaLivro(@PathVariable Long id, @RequestBody Usuario usuario){
+	public ResponseEntity<UsuarioDTO> atualizaLivro(@PathVariable Long id, @RequestBody Usuario usuario){
 		return ResponseEntity.ok(usuarioService.atualizaUsuario(id, usuario));
 	}
 	
@@ -69,17 +71,17 @@ public class UsuarioController {
 	
 	
 	@PostMapping("/usuario/{id}/alugar")
-	public ResponseEntity<Usuario> alugarLivro(@PathVariable Long id, @RequestBody Livro livro){		
+	public ResponseEntity<LivroDTO> alugarLivro(@PathVariable Long id, @RequestBody Livro livro){		
 		return ResponseEntity.ok(usuarioService.alugaLivro(id, livro));
 	}
 	
 	@PostMapping("/usuario/{id}/devolver")
-	public ResponseEntity<Livro> devolverLivro(@PathVariable Long id, @RequestBody Livro livro){		
+	public ResponseEntity<LivroDTO> devolverLivro(@PathVariable Long id, @RequestBody Livro livro){		
 		return ResponseEntity.ok(usuarioService.devolveLivro(id, livro));
 	}
 	
 	@GetMapping("/usuario/{id}/livros")
-	public ResponseEntity<List<Livro>> alugarLivro(@PathVariable Long id){		
-		return ResponseEntity.ok(livroRepository.findByUsuarioId(id));
+	public ResponseEntity<List<LivroDTO>> alugarLivro(@PathVariable Long id){		
+		return ResponseEntity.ok(livroServices.buscaLivrosPorUsuario(id));
 	}
 }

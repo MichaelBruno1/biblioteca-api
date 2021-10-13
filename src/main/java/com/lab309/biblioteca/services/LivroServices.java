@@ -4,10 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lab309.biblioteca.dto.LivroDTO;
+import com.lab309.biblioteca.exception.NotFoundException;
+import com.lab309.biblioteca.exception.ObjetoInvalidoException;
 import com.lab309.biblioteca.model.Livro;
 import com.lab309.biblioteca.repository.LivroRepository;
 
@@ -18,17 +27,36 @@ public class LivroServices{
 	LivroRepository livroRepository;
 	
 	
-	public Optional<Livro> buscarLivro(Long id) {
-		return livroRepository.findById(id);
+	public LivroDTO buscarLivro(Long id) {
+		
+		Optional<Livro> livroOpcional = livroRepository.findById(id);	
+		
+		if(livroOpcional.isEmpty()) {
+			throw new NotFoundException("Livro não encontrado");
+		}
+		
+	
+		return new LivroDTO(livroOpcional.get());
 	}
 
 	
 	public Livro inserirLivro(Livro livro) {
+		
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<Livro>> violations = validator.validate(livro);
+		
+		if (!violations.isEmpty()) {
+			throw new ObjetoInvalidoException("Objeto Inválido");
+		}
+		
 		return livroRepository.save(livro);
 	}
 
-	public List<Livro> buscarTodos(Map<String, String> filtros){
+	public List<LivroDTO> buscarTodos(Map<String, String> filtros){
+		
 		List<Livro> listaDeLivros = new ArrayList<Livro>();
+		
 		
 		if(filtros.isEmpty()) {
 			listaDeLivros = livroRepository.findAll();
@@ -38,24 +66,44 @@ public class LivroServices{
 		}		
 		else if(!(filtros.get("genero") == null)) {
 			listaDeLivros = livroRepository.findByGenero(filtros.get("genero"));
-		}		
+		}
 		
-		return listaDeLivros;
+		return LivroDTO.converter(listaDeLivros);
 	}
 	
 	public void removerLivro(Long id){
-		livroRepository.deleteById(id);
-	}
-	
-	public Livro atualizaLivro(Long id, Livro livro){
 		
-		Optional<Livro> livroOpcional = livroRepository.findById(id);
-
-		if (livroOpcional.isPresent()) {
-			livro.setId(id);
-			return livroRepository.save(livro);
+		try {
+			livroRepository.deleteById(id);
+			
+		} catch (Exception e) {
+			throw new NotFoundException("Livro não encontrado");			
 		}
 		
-		return livro;
+	}
+	
+	
+	public LivroDTO atualizaLivro(Long id, Livro livro){
+		
+		Optional<Livro> livroOpcional = livroRepository.findById(id);
+		
+		if (livroOpcional.isPresent()) {
+			livro.setId(id);
+			livroRepository.save(livro);
+		}else {
+			throw new NotFoundException("Livro não encontrado");
+		}
+		
+		return new LivroDTO(livro);
+	}
+	
+	
+	public List<LivroDTO> buscaLivrosPorUsuario(Long id){
+		
+		List<Livro> listaDeLivros = new ArrayList<Livro>();
+		
+		listaDeLivros = livroRepository.findByUsuarioId(id);
+		
+		return LivroDTO.converter(listaDeLivros);
 	}
 }

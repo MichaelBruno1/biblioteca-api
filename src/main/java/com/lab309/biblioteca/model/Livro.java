@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Livro {
@@ -15,9 +17,18 @@ public class Livro {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotBlank
+	@Size(min = 1, max = 100)
 	private String titulo;
+	
+	@NotBlank
+	@Size(min = 1, max = 100)
 	private String autor;
+	
+	@NotBlank
+	@Size(min = 1, max = 50)
 	private String genero;
+	
 	private boolean alugado;
 	
 	@ManyToOne(cascade = CascadeType.ALL)

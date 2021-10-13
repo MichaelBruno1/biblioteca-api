@@ -4,10 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lab309.biblioteca.dto.LivroDTO;
+import com.lab309.biblioteca.dto.UsuarioDTO;
+import com.lab309.biblioteca.exception.NotFoundException;
+import com.lab309.biblioteca.exception.ObjetoInvalidoException;
 import com.lab309.biblioteca.model.Livro;
 import com.lab309.biblioteca.model.Usuario;
 import com.lab309.biblioteca.repository.LivroRepository;
@@ -23,23 +33,45 @@ public class UsuarioService {
 	LivroRepository livroRepository;
 	
 	
-	public Usuario registraUsuario(Usuario usuario) {
-		return usuarioRepository.save(usuario);
+	public UsuarioDTO registraUsuario(Usuario usuario) {
+		
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<Usuario>> violations = validator.validate(usuario);
+		
+		if (!violations.isEmpty()) {
+			throw new ObjetoInvalidoException("Objeto Inválido");
+		}
+		
+		return new UsuarioDTO(usuarioRepository.save(usuario));
 	}
 	
-	public Optional<Usuario> buscarUsuario(Long id) {
-		return usuarioRepository.findById(id);
+	public UsuarioDTO buscarUsuario(Long id) {
+		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
+		
+		if(usuarioOpcional.isEmpty()) {
+			throw new NotFoundException("Usuario não encontrado");
+		}
+		
+		return new UsuarioDTO(usuarioOpcional.get());
 	}
 	
-	public List<Usuario> buscaTodos(){
-		return usuarioRepository.findAll();
+	public List<UsuarioDTO> buscaTodos(){
+		return UsuarioDTO.converter(usuarioRepository.findAll());
 	}
 	
 	public void removerUsuario(Long id){
-		usuarioRepository.deleteById(id);
+		
+		try {
+			usuarioRepository.deleteById(id);
+			
+		} catch (Exception e) {
+			throw new NotFoundException("Usuario não encontrado");			
+		}
+		
 	}
 	
-	public List<Usuario> buscarTodos(Map<String, String> filtros){
+	public List<UsuarioDTO> buscarTodos(Map<String, String> filtros){
 		List<Usuario> listaDeUsuarios = new ArrayList<Usuario>();
 		
 		if(filtros.isEmpty()) {
@@ -52,46 +84,54 @@ public class UsuarioService {
 			listaDeUsuarios = usuarioRepository.findByEmail(filtros.get("email"));
 		}		
 		
-		return listaDeUsuarios;
+		return UsuarioDTO.converter(listaDeUsuarios);
 	}
 	
-	public Usuario atualizaUsuario(Long id, Usuario usuario){
+	public UsuarioDTO atualizaUsuario(Long id, Usuario usuario){
 		
 		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
 
 		if (usuarioOpcional.isPresent()) {
 			usuario.setId(id);
-			return usuarioRepository.save(usuario);
+			usuarioRepository.save(usuario);
+		}else {
+			throw new NotFoundException("Usuario não encontrado");
 		}
 		
-		return usuario;
+		return new UsuarioDTO(usuario);
 	}
 	
 	
-	public Usuario alugaLivro(Long id, Livro livro) {
-		
+	public LivroDTO alugaLivro(Long id, Livro livro) {
+
 		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
+		Optional<Livro> livroOpcional = livroRepository.findById(livro.getId());
 		
-		if(usuarioOpcional.isPresent()) {
+		if(usuarioOpcional.isPresent() && livroOpcional.isPresent()) {
 			livro.setUsuario(usuarioOpcional.get());
 			livro.setAlugado(true);
 			livroRepository.save(livro);
+		}else {
+			throw new NotFoundException("Usuario ou livro não encontrado");
 		}
 		
-		return usuarioOpcional.get();
+		return new LivroDTO(livro);
 	}
 	
 	
-	public Livro devolveLivro(Long id, Livro livro) {
+	public LivroDTO devolveLivro(Long id, Livro livro) {
 		
 		Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
+		Optional<Livro> livroOpcional = livroRepository.findById(livro.getId());
 		
-		if(usuarioOpcional.isPresent()) {
+		if(usuarioOpcional.isPresent() && livroOpcional.isPresent()) {
 			livro.setUsuario(null);
 			livro.setAlugado(false);
 			livroRepository.save(livro);
+		}else {
+			throw new NotFoundException("Usuario ou livro não encontrado");
 		}
 		
-		return livro;
+		return new LivroDTO(livro);
 	}
 }
